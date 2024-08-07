@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تعديل المشاريع</title>
+    <link rel="shortcut icon" href="logo.png">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="JS/bootstrap.min.js"></script>
+    <script src="JS/bootstrap.bundle.min.js"></script>
+    <script src="JS/jquery.js "></script>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/all.min.css" rel="stylesheet">
+
+</head>
+
+<script>
+    var confirm = false;
+    async function kol() {
+        $(document).on('submit', '#sign', function(e) {
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: async function(html) {
+                    let request = async() => {
+                        const response = await fetch('http://localhost:3002/editInfo');
+                        const data = await response.json();
+                        confirm = data.test;
+                        let s = "";
+                        if (data.resultForStudents.errors)
+                            s += "<div class='errors'><div class='errors-header'>" + "الأخطاء هي :</div><br> " + data.resultForStudents.errors + "</div>";
+                        if (data.resultForStudents.similarProjects) {
+                            s += "<div class='similar'>" + "<div class='similar-header'>" + "المشاريع المشابهة هي : </div><br>";
+                            for (let i = 0; i < data.resultForStudents.similarProjects.length; i++)
+                                s += data.resultForStudents.similarProjects[i] + "<br>";
+                            s += "</div>"
+                        }
+
+                        if (data.resultForStudents.similarOldProjects) {
+                            s += "<div class='similar'>" + "<div class='similar-header'>" + "المشاريع المشابهة من السنوات الماضية هي :" + "</div><br>";
+                            for (let i = 0; i < data.resultForStudents.similarOldProjects.length; i++)
+                                s += data.resultForStudents.similarOldProjects[i] + "<br>";
+                            s += "</div>"
+                        }
+
+                        let s1 = "";
+                        let res = data.resultForStudents.forSubmit;
+                        if (res) {
+                            s1 += "<div class='submit'><div class='submit-header'>" + "المعلومات التي تم ادخالها للمشروع هي :" + "</div><br>";
+                            s1 += "<span class='submit-title'>" + "اسم المشروع : " + "</span><span class='submit-ans'>" + res.project_title + "</span><br>";
+                            s1 += "<span class='submit-title'>" + "اسم الدكتور : " + "</span><span class='submit-ans'>" + res.doctor + "</span><br>";
+                            s1 += "<span class='submit-title'>" + "اسم المشرف : " + "</span><span class='submit-ans'>" + res.guider + "</span><br>";
+
+
+
+                            if (res.students) {
+                                s1 += "<span class='submit-title'>" + "الطلاب المشاركين : " + "</span><br>";
+
+                                for (let i = 0; i < res.students.length; i++) {
+                                    let st = "";
+                                    st += "<div class='student'>" + "معلومات الطالب رقم " + (i + 1) + "<br>";
+                                    st += "<span class='submit-title'>" + " اسم الطالب " + " هو : " + "</span><span class='submit-ans'>" + res.students[i].name + "</span><br>";
+                                    st += "<span class='submit-title'>" + " رقم الطالب " + " هو : " + "</span><span class='submit-ans'>" + res.students[i].id + "</span><br>";
+                                    st += "<span class='submit-title'>" + "  اسم الأب للطالب" + " هو : " + "</span><span class='submit-ans'>" + res.students[i].father + "</span><br>";
+                                    st += "<span class='submit-title'>" + " سنة الطالب " + " هي : " + "</span><span class='submit-ans'>" + res.students[i].year + "</span><br>";
+                                    if (res.students[i].major == 1)
+                                        st += "<span class='submit-title'>" + " اختصاص الطالب " + " هو : " + "</span><span class='submit-ans'>" + "برمجيات" + "</span><br>";
+                                    else
+                                        st += "<span class='submit-title'>" + " اختصاص الطالب " + " هو : " + "</span><span class='submit-ans'>" + "شبكات" + "</span><br>";
+                                    st += "</div>"
+                                    s1 += st;
+                                }
+                            }
+                        }
+
+                        let s2 = "</div><div class='submit'><div class='submit-header'>" + "معلومات المشروع قبل التعديل هي : " + "</div><br>"
+                        if (data.resultForStudents.oldProject) {
+                            let res2 = data.resultForStudents.oldProject;
+                            s2 += "<span class='submit-title'>" + "اسم المشروع : " + "</span><span class='submit-ans'>" + res2.project_title + "</span><br>";
+                            s2 += "<span class='submit-title'>" + "اسم الدكتور : " + "</span><span class='submit-ans'>" + res2.doctor + "</span><br>";
+                            s2 += "<span class='submit-title'>" + "اسم المشرف : " + "</span><span class='submit-ans'>" + res2.guider + "</span><br>";
+
+                            if (res2.students.length > 0)
+                                s2 += "<span class='submit-title'>" + "الطلاب المشاركين : " + "</span><br>";
+
+                            for (let i = 0; i < res2.students.length; i++) {
+                                let st = "";
+                                st += "<div class='student'>" + "معلومات الطالب رقم " + (i + 1) + "<br>";
+                                st += "<span class='submit-title'>" + " اسم الطالب " + " هو : " + "</span><span class='submit-ans'>" + res2.students[i].name + "</span><br>";
+                                st += "<span class='submit-title'>" + " رقم الطالب " + " هو : " + "</span><span class='submit-ans'>" + res2.students[i].id + "</span><br>";
+                                st += "<span class='submit-title'>" + "  اسم الأب للطالب" + " هو : " + "</span><span class='submit-ans'>" + res2.students[i].father + "</span><br>";
+                                st += "<span class='submit-title'>" + " سنة الطالب " + " هي : " + "</span><span class='submit-ans'>" + res2.students[i].year + "</span><br>";
+                                if (res2.students[i].major == 1)
+                                    st += "<span class='submit-title'>" + " اختصاص الطالب " + " هو : " + "</span><span class='submit-ans'>" + "برمجيات" + "</span><br>";
+                                else
+                                    st += "<span class='submit-title'>" + " اختصاص الطالب " + " هو : " + "</span><span class='submit-ans'>" + "شبكات" + "</span><br>";
+                                st += "</div>"
+                                s2 += st;
+                            }
+                        }
+
+                        s2 += "</div>"
+                        document.getElementById("result").innerHTML = s + s1 + s2;
+
+                        if (confirm)
+                            $('#confirm').show();
+
+
+
+                    }
+
+                    await request();
+                }
+
+            });
+            e.preventDefault();
+        });
+        $('#confirm').hide();
+
+
+        $('#confirm').click(function() {
+            if (confirm) {
+                $.post('/confirmEdit');
+            }
+        });
+    }
+
+    $(document).ready(async function() {
+        await kol();
+    });
+</script>
+
+
+
+<body>
+    <div class="flex-w">
+        <div class="container">
+            <div class="container">
+                <nav class="navbar navbar-expand-lg navbar-light main-navbar">
+                    <div class="container">
+
+                        <a class="navbar-brand d-flex align-items-end" href="#">
+                            <img src="../logo.png" alt="" width="50" height="50" class="d-inline-block align-text-top">
+                            <div class="navbar-brand">
+                                <div class="brand ">
+                                    جامعة البعث
+                                </div>
+                                <div class="sub-brand">
+                                    كلية الهندسة المعلوماتية
+                                </div>
+                            </div>
+
+                        </a>
+
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                            <i class="fa-solid fa-bars"></i>
+                        </button>
+
+                        <div class="collapse navbar-collapse  " id="navbarNavDropdown">
+                            <ul class="navbar-nav">
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav " aria-current="page" href="/files">
+                                        <i class="fa-solid fa-users-line"></i> طلاب
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav" aria-current="page" href="/students">
+                                        <i class="fa-solid fa-network-wired"></i> مشاريع
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav" aria-current="page" href="/doctors">
+                                        <i class="fa-solid fa-chalkboard-user"></i> مشرفين
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav" aria-current="page" href="/query">
+                                        <i class="fa-solid fa-file-lines"></i> تقارير
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav" aria-current="page" href="/archive">
+                                        <i class="fa-solid fa-folder-open"></i> أرشفة
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2 ">
+                                    <a class="nav-link main-nav " aria-current="page" href="/highStudy">
+                                        <i class="fa-solid fa-graduation-cap"></i> مشاريع الدراسات
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav" aria-current="page" href="/report">
+                                        <i class="fa-solid fa-file-invoice"></i> تقارير الدراسات
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+
+            <div class="container">
+                <ul class="nav nav-tabs">
+
+                    <li class="nav-item px-1">
+                        <a class="nav-link sub-link" href="/students">تسجيل</a>
+                    </li>
+                    <li class="nav-item px-1">
+                        <a class="nav-link sub-link" href="/updateStudents">تعديل</a>
+                    </li>
+                    <li class="nav-item px-1">
+                        <a class="nav-link sub-link" href="/deleteStudents">حذف</a>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="container">
+                <div class="container my-5 col-lg-6">
+
+                    <form action="/updateStudents" method="post" id="sign">
+
+                        <label for="studentid" class="col-form-label">المشروع</label>
+                        <input type="number" id="studentid" class="form-control" name="stdID" min="0" required>
+                        <div id="emailHelp" class="form-text">أدخل رقم أي طالب مشترك في المشروع المراد تعديله.</div>
+
+
+                        <label for="doctor" class="col-form-label">الدكتور المشرف</label>
+                        <select class="form-select form-control" id="doctor" name="doctor">
+                            <option class="add-docs" selected value=""></option>
+                        </select>
+
+                        <label for="supervisor" class="col-form-label">المهندس المشرف</label>
+                        <select class="form-select form-control" id="supervisor" name="supervisor">
+                            <option class="add-engs" selected value=""></option>
+                        </select>
+
+                        <label for="year" class="col-form-label">سنة المشروع</label>
+                        <select class="form-select form-control" id="year" name="year">
+                            <option selected value=""></option>
+                            <option value="4">الرابعة</option>
+                            <option value="5">الخامسة</option>
+                        </select>
+
+                        <label for="projectname" class="col-form-label">عنوان المشروع</label>
+                        <input type="text" id="projectname" class="form-control" name="projectName">
+
+                        <div class="sub-added">
+                            <label for="studentid" class="col-form-label">رقم الطالب</label>
+                            <input type="number" id="studentid" class="form-control" name="studentID[]" min="0">
+                        </div>
+                        <div class="plus-button">
+                            <i class="fa-regular fa-square-plus sub-plus"></i> إضافة طالب
+                        </div>
+
+                        <button type="submit" class="btn">تعديل</button>
+
+                        <div class="container" id="result">
+
+                        </div>
+                        <input class="btn" style="background-color:green" name="like" id="confirm" value="تأكيد" type="button" onclick="location.href='successPage';">
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="foot text-center mt-5">
+
+            <div class="p-2 pb-0 main-footer">
+                <a class="btn btn-outline-light btn-floating m-1" href="https://m.facebook.com/profile.php?id=112964158716509" role="button"><i
+                        class="fab fa-facebook-f"></i></a>
+
+                <a class="btn btn-outline-light btn-floating m-1" href="https://twitter.com/albaathunivweb?lang=ar" role="button"><i class="fab fa-twitter"></i></a>
+
+                <a class="btn btn-outline-light btn-floating m-1" href="https://www.instagram.com/albaath.university/" role="button"><i class="fab fa-instagram"></i></a>
+
+
+            </div>
+
+            <div class="text-center p-2 sub-footer">
+                © 2022 Copyright: Al-Baath University
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+
+    <script src="JS/jquery.js "></script>
+    <script src="JS/style.js "></script>
+
+</body>
+
+</html>

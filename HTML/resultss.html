@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة مشاريع</title>
+    <link rel="shortcut icon" href="logo.png">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="JS/bootstrap.min.js"></script>
+    <script src="JS/bootstrap.bundle.min.js"></script>
+    <script src="JS/jquery.js "></script>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/all.min.css" rel="stylesheet">
+</head>
+<script>
+    $(document).ready(async function() {
+        let request = async() => {
+            const response = await fetch('http://localhost:3002/query12');
+            const data = await response.json();
+            let s = JSON.stringify(data);
+            let str = s.replaceAll("\"father\"", "اسم الأب").replaceAll("\"major\":2", "الاختصاص : شبكات");
+            str = str.replaceAll("\"major\":1", "الاختصاص : برمجيات")
+            str = str.replaceAll("\"name\"", "الاسم")
+            str = str.replaceAll("\"year\":4", "السنة : الرابعة")
+            str = str.replaceAll("\"year\":5", "السنة : الخامسة")
+            str = str.replaceAll("\"year\"", "السنة")
+            str = str.replaceAll("\"doctor\"", "الدكتور")
+            str = str.replaceAll("\"guider\"", "المشرف")
+            str = str.replaceAll("\"project_title\"", "اسم المشروع")
+            str = str.replaceAll("\"id\"", "الرقم الجامعي")
+            document.getElementById("lol").innerHTML = str;
+
+        }
+        await request();
+    });
+    //     var dataname;
+    //     console.log("hii");
+    //     var dataname=[];
+    //     let request=async() => {
+    //         const response = await fetch('http://localhost:3003/confirm');
+    //         const data = await response.json();
+    //         dataname=data;
+    //         console.log(dataname);
+    //     }
+    //     request();
+    //     function myfun()
+    //     {
+    //         return confirm(String(dataname));
+    //     }
+    //    // document.getElementById("gog").setAttribute("onsubmit","myfun()");
+</script>
+
+<body>
+    <div id="lol">
+
+    </div>
+    <script src="JS/jquery.js "></script>
+
+
+
+</body>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حذف المشرفين</title>
+    <link rel="shortcut icon" href="logo.png">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="JS/bootstrap.min.js"></script>
+    <script src="JS/bootstrap.bundle.min.js"></script>
+    <script src="JS/jquery.js "></script>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/all.min.css" rel="stylesheet">
+
+
+</head>
+
+<script>
+    async function updateF() {
+        $(document).on('submit', '#sign', function(e) {
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: $(this).attr('method'),
+                data: $(this).serialize(),
+                success: async function(html) {
+
+                    let request = async() => {
+                        const response = await fetch('http://localhost:3002/deleteDocInfo');
+                        const data = await response.json();
+
+                        let s = "";
+                        if (data.resultForStudents.olddata) {
+                            s += "<div class='errors'><div class='errors-header'>" + "الدكاترة المطلوب حذفهن  :</div><br> ";
+                            for (let i = 0; i < data.resultForStudents.olddata.length; i++) {
+                                s += "اسم الدكتور :" + data.resultForStudents.olddata[i].name + "<br>";
+                                let s2 = (data.resultForStudents.olddata[i].major == "1") ? "برمجيات" : "شبكات";
+                                s += "اختصاص الدكتور :" + s2 + "<br>";
+                                s += "أكبر عدد مشاريع في السنة الخامسة الخاصة بالدكتور :" + data.resultForStudents.olddata[i].maxFive + "<br>";
+                                s += "أكبر عدد مشاريع في السنة الرابعة الخاصة بالدكتور :" + data.resultForStudents.olddata[i].maxFour + "<br>";
+
+                                s += "<br><br><br>"
+                            }
+                            s += "</div>";
+                        }
+
+                        if (data.resultForStudents.olddataEng) {
+                            s += "<div class='errors'><div class='errors-header'>" + "المشرفين المطلوب حذفهن  :</div><br> ";
+                            for (let i = 0; i < data.resultForStudents.olddataEng.length; i++) {
+                                s += "اسم المشرف :" + data.resultForStudents.olddataEng[i].name + "<br>";
+                                let s2 = (data.resultForStudents.olddataEng[i].major == "1") ? "برمجيات" : "شبكات";
+                                s += "اختصاص المشرف :" + s2 + "<br>";
+                                s += "أكبر عدد مشاريع في السنة الخامسة الخاصة بالمشرف :" + data.resultForStudents.olddataEng[i].maxFive + "<br>";
+                                s += "أكبر عدد مشاريع في السنة الرابعة الخاصة بالمشرف :" + data.resultForStudents.olddataEng[i].maxFour + "<br>";
+
+                                s += "<br><br><br>"
+                            }
+                            s += "</div>";
+                        }
+                        $('#confirm').show();
+
+                        document.getElementById("result").innerHTML = s;
+
+
+
+                    }
+
+                    await request();
+                }
+            });
+            e.preventDefault();
+        });
+
+
+
+        $('#confirm').click(function() {
+            $.post('/deleteDoc12');
+
+        });
+
+    }
+
+    $(document).ready(async function() {
+        $('#confirm').hide();
+        await updateF();
+    });
+</script>
+
+
+
+<body>
+    <div class="flex-w">
+        <div class="container">
+
+            <div class="container">
+                <nav class="navbar navbar-expand-lg navbar-light main-navbar">
+                    <div class="container">
+
+                        <a class="navbar-brand d-flex align-items-end" href="#">
+                            <img src="../logo.png" alt="" width="50" height="50" class="d-inline-block align-text-top">
+                            <div class="navbar-brand">
+                                <div class="brand ">
+                                    جامعة البعث
+                                </div>
+                                <div class="sub-brand">
+                                    كلية الهندسة المعلوماتية
+                                </div>
+                            </div>
+
+                        </a>
+
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                            <i class="fa-solid fa-bars"></i>
+                        </button>
+
+                        <div class="collapse navbar-collapse  " id="navbarNavDropdown">
+                            <ul class="navbar-nav">
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav " aria-current="page" href="/files">
+                                        <i class="fa-solid fa-users-line"></i> طلاب
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav" aria-current="page" href="/students">
+                                        <i class="fa-solid fa-network-wired"></i> مشاريع
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav" aria-current="page" href="/doctors">
+                                        <i class="fa-solid fa-chalkboard-user"></i> مشرفين
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav" aria-current="page" href="/query">
+                                        <i class="fa-solid fa-file-lines"></i> تقارير
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav" aria-current="page" href="/archive">
+                                        <i class="fa-solid fa-folder-open"></i> أرشفة
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2 ">
+                                    <a class="nav-link main-nav " aria-current="page" href="/highStudy">
+                                        <i class="fa-solid fa-graduation-cap"></i> مشاريع الدراسات
+                                    </a>
+                                </li>
+                                <li class="nav-item px-2">
+                                    <a class="nav-link main-nav" aria-current="page" href="/report">
+                                        <i class="fa-solid fa-file-invoice"></i> تقارير الدراسات
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+
+            <div class="container">
+                <ul class="nav nav-tabs">
+
+                    <li class="nav-item px-1">
+                        <a class="nav-link sub-link" href="/doctors">تسجيل</a>
+                    </li>
+                    <li class="nav-item px-1">
+                        <a class="nav-link sub-link" href="/updateDoctors">تعديل</a>
+                    </li>
+                    <li class="nav-item px-1">
+                        <a class="nav-link sub-link" href="/deleteDoctors">حذف</a>
+                    </li>
+                </ul>
+
+            </div>
+
+            <div class="container">
+                <form action="/deleteDoctors" method="post" id="sign">
+
+                    <div class="added">
+                        <div class="container row justify-content-sm-center g-3">
+                            <div class="col-sm-5">
+                                <label for="deleteddoctor" class="col-form-label"> اسم الدكتور المشرف</label>
+                                <select class="form-select form-control" id="deleteddoctor" name="deletedDoctor[]">
+                                    <option class="add-docs" selected value=""></option>
+                                </select>
+                                <div id="emailHelp" class="form-text">أدخل اسم الدكتور المشرف المراد حذفه.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="plus-button">
+                        <i class="fa-regular fa-square-plus plus"></i>
+                    </div>
+
+
+                    <div class="line-between container"></div>
+                    <div class="added">
+                        <div class="container row justify-content-sm-center g-3">
+                            <div class="col-sm-5">
+                                <label for="deletedeng" class="col-form-label"> اسم المهندس المشرف</label>
+                                <select class="form-select form-control" id="deletedeng" name="deletedEng[]">
+                                    <option class="add-engs" selected value=""></option>
+                                </select>
+                                <div id="emailHelp" class="form-text">أدخل اسم المهندس المشرف المراد حذفه.</div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="plus-button">
+                        <i class="fa-regular fa-square-plus plus"></i>
+                    </div>
+
+
+
+                    <div class="line-between container"></div>
+
+
+                    <button type="submit" class="btn">حذف</button>
+
+                    <div class="container" id="result">
+
+                    </div>
+                    <input class="btn" style="background-color:green" name="like" id="confirm" value="تأكيد" type="button" onclick="location.href='deletePage';">
+                </form>
+            </div>
+
+        </div>
+
+        <div class="text-center mt-5">
+
+            <div class="p-2 pb-0 main-footer">
+                <a class="btn btn-outline-light btn-floating m-1" href="https://m.facebook.com/profile.php?id=112964158716509" role="button"><i
+                        class="fab fa-facebook-f"></i></a>
+
+                <a class="btn btn-outline-light btn-floating m-1" href="https://twitter.com/albaathunivweb?lang=ar" role="button"><i class="fab fa-twitter"></i></a>
+
+                <a class="btn btn-outline-light btn-floating m-1" href="https://www.instagram.com/albaath.university/" role="button"><i class="fab fa-instagram"></i></a>
+
+
+            </div>
+
+            <div class="text-center p-2 sub-footer">
+                © 2022 Copyright: Al-Baath University
+            </div>
+
+        </div>
+    </div>
+
+    <script src="JS/jquery.js "></script>
+    <script src="JS/style.js "></script>
+
+</body>
+
+</html>
